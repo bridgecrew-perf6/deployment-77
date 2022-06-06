@@ -1,0 +1,28 @@
+version: '3.0'
+
+services:
+  web:
+    image: altayatalay/web:latest
+    restart: unless-stopped
+    ports:
+      - "80:80"
+  
+  db-service:
+    image: altayatalay/db-service:latest
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    depends_on:
+      db:
+        condition: service_healthy:latest
+
+  db:
+    image: altayatalay/db
+    restart: unless-stopped
+    command: --sql_mode=''
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+
